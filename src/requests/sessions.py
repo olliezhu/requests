@@ -248,12 +248,11 @@ class SessionRedirectMixin:
             # A failed tell() sets `_body_position` to `object()`. This non-None
             # value ensures `rewindable` will be True, allowing us to raise an
             # UnrewindableBodyError, instead of hanging the connection.
-            rewindable = prepared_request._body_position is not None and (
-                "Content-Length" in headers or "Transfer-Encoding" in headers
-            )
 
             # Attempt to rewind consumed file-like object.
-            if rewindable:
+            if rewindable := prepared_request._body_position is not None and (
+                "Content-Length" in headers or "Transfer-Encoding" in headers
+            ):
                 rewind_body(prepared_request)
 
             # Override the original request.
@@ -295,8 +294,7 @@ class SessionRedirectMixin:
             del headers["Authorization"]
 
         # .netrc might have more auth for us on our new host.
-        new_auth = get_netrc_auth(url) if self.trust_env else None
-        if new_auth is not None:
+        if (new_auth := get_netrc_auth(url) if self.trust_env else None) is not None:
             prepared_request.prepare_auth(new_auth)
 
     def rebuild_proxies(self, prepared_request, proxies):

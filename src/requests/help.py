@@ -42,9 +42,8 @@ def _implementation():
     doesn't work for Jython or IronPython. Future investigation should be done
     to work out the correct shape of the code for those platforms.
     """
-    implementation = platform.python_implementation()
 
-    if implementation == "CPython":
+    if (implementation := platform.python_implementation()) == "CPython":
         implementation_version = platform.python_version()
     elif implementation == "PyPy":
         implementation_version = "{}.{}.{}".format(

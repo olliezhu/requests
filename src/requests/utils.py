@@ -199,8 +199,7 @@ def super_len(o):
 def get_netrc_auth(url, raise_errors=False):
     """Returns the Requests tuple auth for a given url from netrc."""
 
-    netrc_file = os.environ.get("NETRC")
-    if netrc_file is not None:
+    if (netrc_file := os.environ.get("NETRC")) is not None:
         netrc_locations = (netrc_file,)
     else:
         netrc_locations = (f"~/{f}" for f in NETRC_FILES)
@@ -237,8 +236,7 @@ def get_netrc_auth(url, raise_errors=False):
         host = ri.netloc.split(splitstr)[0]
 
         try:
-            _netrc = netrc(netrc_path).authenticators(host)
-            if _netrc:
+            if _netrc := netrc(netrc_path).authenticators(host):
                 # Return with login / password
                 login_i = 0 if _netrc[0] else 1
                 return (_netrc[login_i], _netrc[2])
@@ -520,11 +518,9 @@ def _parse_content_type_header(header):
     items_to_strip = "\"' "
 
     for param in params:
-        param = param.strip()
-        if param:
+        if param := param.strip():
             key, value = param, True
-            index_of_equals = param.find("=")
-            if index_of_equals != -1:
+            if (index_of_equals := param.find("=")) != -1:
                 key = param[:index_of_equals].strip(items_to_strip)
                 value = param[index_of_equals + 1 :].strip(items_to_strip)
             params_dict[key.lower()] = value
@@ -565,11 +561,9 @@ def stream_decode_response_unicode(iterator, r):
 
     decoder = codecs.getincrementaldecoder(r.encoding)(errors="replace")
     for chunk in iterator:
-        rv = decoder.decode(chunk)
-        if rv:
+        if rv := decoder.decode(chunk):
             yield rv
-    rv = decoder.decode(b"", final=True)
-    if rv:
+    if rv := decoder.decode(b"", final=True):
         yield rv
 
 
@@ -607,9 +601,8 @@ def get_unicode_from_response(r):
     tried_encodings = []
 
     # Try charset from content-type
-    encoding = get_encoding_from_headers(r.headers)
 
-    if encoding:
+    if encoding := get_encoding_from_headers(r.headers):
         try:
             return str(r.content, encoding)
         except UnicodeError:
@@ -743,8 +736,7 @@ def set_environ(env_name, value):
     the environment variable 'env_name'.
 
     If 'value' is None, do nothing"""
-    value_changed = value is not None
-    if value_changed:
+    if value_changed := value is not None:
         old_value = os.environ.get(env_name)
         os.environ[env_name] = value
     try:
@@ -963,8 +955,7 @@ def guess_json_utf(data):
         return "utf-8-sig"  # BOM included, MS style (discouraged)
     if sample[:2] in (codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE):
         return "utf-16"  # BOM included
-    nullcount = sample.count(_null)
-    if nullcount == 0:
+    if (nullcount := sample.count(_null)) == 0:
         return "utf-8"
     if nullcount == 2:
         if sample[::2] == _null2:  # 1st and 3rd are null

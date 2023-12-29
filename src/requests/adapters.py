@@ -336,9 +336,8 @@ class HTTPAdapter(BaseAdapter):
         :param proxies: (optional) A Requests-style dictionary of proxies used on this request.
         :rtype: urllib3.ConnectionPool
         """
-        proxy = select_proxy(url, proxies)
 
-        if proxy:
+        if proxy := select_proxy(url, proxies):
             proxy = prepend_scheme_if_needed(proxy, "http")
             proxy_url = parse_url(proxy)
             if not proxy_url.host:

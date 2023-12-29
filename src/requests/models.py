@@ -96,8 +96,7 @@ class RequestEncodingMixin:
 
         url.append(path)
 
-        query = p.query
-        if query:
+        if query := p.query:
             url.append("?")
             url.append(query)
 
@@ -456,8 +455,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             raise InvalidURL("URL has an invalid label.")
 
         # Carefully reconstruct the network location
-        netloc = auth or ""
-        if netloc:
+        if netloc := auth or "":
             netloc += "@"
         netloc += host
         if port:
@@ -470,8 +468,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         if isinstance(params, (str, bytes)):
             params = to_native_string(params)
 
-        enc_params = self._encode_params(params)
-        if enc_params:
+        if enc_params := self._encode_params(params):
             if query:
                 query = f"{query}&{enc_params}"
             else:
@@ -514,14 +511,13 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             if not isinstance(body, bytes):
                 body = body.encode("utf-8")
 
-        is_stream = all(
+
+        if is_stream := all(
             [
                 hasattr(data, "__iter__"),
                 not isinstance(data, (basestring, list, tuple, Mapping)),
             ]
-        )
-
-        if is_stream:
+        ):
             try:
                 length = super_len(data)
             except (TypeError, AttributeError, UnsupportedOperation):
@@ -623,8 +619,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         else:
             self._cookies = cookiejar_from_dict(cookies)
 
-        cookie_header = get_cookie_header(self._cookies, self)
-        if cookie_header is not None:
+        if (cookie_header := get_cookie_header(self._cookies, self)) is not None:
             self.headers["Cookie"] = cookie_header
 
     def prepare_hooks(self, hooks):
@@ -1027,6 +1022,5 @@ class Response:
         if not self._content_consumed:
             self.raw.close()
 
-        release_conn = getattr(self.raw, "release_conn", None)
-        if release_conn is not None:
+        if (release_conn := getattr(self.raw, "release_conn", None)) is not None:
             release_conn()
