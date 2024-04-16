@@ -258,7 +258,7 @@ class HTTPAdapter(BaseAdapter):
 
             if not cert_loc or not os.path.exists(cert_loc):
                 raise OSError(
-                    f"Could not find a suitable TLS CA certificate bundle, "
+                    "Could not find a suitable TLS CA certificate bundle, "
                     f"invalid path: {cert_loc}"
                 )
 
@@ -282,7 +282,7 @@ class HTTPAdapter(BaseAdapter):
                 conn.key_file = None
             if conn.cert_file and not os.path.exists(conn.cert_file):
                 raise OSError(
-                    f"Could not find the TLS certificate file, "
+                    "Could not find the TLS certificate file, "
                     f"invalid path: {conn.cert_file}"
                 )
             if conn.key_file and not os.path.exists(conn.key_file):
@@ -474,7 +474,7 @@ class HTTPAdapter(BaseAdapter):
             except ValueError:
                 raise ValueError(
                     f"Invalid timeout {timeout}. Pass a (connect, read) timeout tuple, "
-                    f"or a single float to set both timeouts to the same value."
+                    "or a single float to set both timeouts to the same value."
                 )
         elif isinstance(timeout, TimeoutSauce):
             pass
